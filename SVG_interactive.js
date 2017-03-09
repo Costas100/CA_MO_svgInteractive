@@ -2,12 +2,26 @@ var svg = document.getElementById("vimage");
 var clearButton = document.getElementById("clear");
 
 var circleClick = function(e){
-    console.log("CIRCLE: "+ e.target);
-    this.setAttribute("fill","green");
-   // e.stopPropagation();
+    if (this.getAttribute("fill") == "green"){
+	this.remove();
+	svg.appendChild(makeRandDot());
+    }
+    else{
+	this.setAttribute("fill","green");
+    }
 };
 
 
+var randomStart = function(){
+    var max = 375;
+    var min = 25;
+    return Math.floor(Math.random() * (max -min + 1) + min);
+};
+
+var makeRandDot = function(){
+    return makeDot(randomStart,randomStart);
+};
+    
 
 var makeDot = function(x,y){
 
@@ -17,6 +31,7 @@ var makeDot = function(x,y){
     c.setAttribute("r","25");
     c.setAttribute("fill","blue");
 
+    
     c.addEventListener("click",circleClick);
     return c;
     
