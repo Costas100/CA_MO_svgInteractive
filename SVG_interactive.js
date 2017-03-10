@@ -80,14 +80,19 @@ var move = function(){
     var dir = 0;
     
     var moveCircle = function(){
-	
-	var circles = document.getElementsByTagName('circle');
 
-	for (var i = 0; i < circles.length; i++) {
-	    var x = parseInt(circles[i].getAttribute("cx"));
-	    console.log(x);
-	    var y = parseInt(circles[i].getAttribute("cy"));
-	    console.log(y);
+
+	//idk why they all move in the same direction
+	//the code should change each individual x,y differently
+	var allCircles = document.getElementsByTagName('circle');
+
+
+	for (var i = 0; i < allCircles.length; i++){
+	    var curCircle = allCircles[i];
+	    var x = parseInt(curCircle.getAttribute("cx"));
+	   // console.log(x);
+	    var y = parseInt(curCircle.getAttribute("cy"));
+	  //  console.log(y);
 
 	    var xMaxBound = svg.getAttribute("width") - 25;
 	    var yMaxBound = svg.getAttribute("height") - 25;
@@ -143,7 +148,7 @@ var move = function(){
 		    y = y - 1;
 		}
 	    }
-	    //last case must be dir == 3
+	   
 	    else{
 		if (x <= 25){
 		    dir = 0;
@@ -162,40 +167,24 @@ var move = function(){
 	    }
 
 	    
-	    circles[i].setAttribute("cx",x);
-	    circles[i].setAttribute("cy",y);
+	    curCircle.setAttribute("cx",x);
+	    curCircle.setAttribute("cy",y);
 	    
 	}
 	
 	rID = window.requestAnimationFrame( moveCircle );
     };
     moveCircle();
-}
+};
 
 
+//added a stop function/button for testing
 
 var stop = function(){
     window.cancelAnimationFrame(rID);
 };
 
 
-
-
-
-
-
-
-var moveAllCircles = function(){
-    var allCircles = document.getElementsByTagName("circle");
-    console.log(allCircles.length);
-    var num = 0;
-    while (num < allCircles.length){
-	console.log(allCircles[num]);
-	animateCircle(allCircles[num]);
-	num++;
-    }
-	
-};
 
 
 moveButton.addEventListener("click",move);
