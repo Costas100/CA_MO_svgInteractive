@@ -98,9 +98,10 @@ var move = function(){
 	    //  console.log(y);
 
 	    var dir = parseInt(curCircle.getAttribute("dir"));
-
-	    var xMaxBound = svg.getAttribute("width") - 25;
-	    var yMaxBound = svg.getAttribute("height") - 25;
+	    var r = parseInt(curCircle.getAttribute('r'));
+	    
+	    var xMaxBound = svg.getAttribute("width") - r;
+	    var yMaxBound = svg.getAttribute("height") - r;
 
 	    if (x == svg.getAttribute("width")/2){
 		split(curCircle);
