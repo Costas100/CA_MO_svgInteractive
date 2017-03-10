@@ -19,7 +19,9 @@ var randomStart = function(){
 };
 
 var makeRandDot = function(){
-    return makeDot(randomStart,randomStart);
+    var x = randomStart();
+    var y = randomStart();
+    return makeDot(x,y);
 };
     
 
