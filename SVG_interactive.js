@@ -27,13 +27,14 @@ var makeRandDot = function(){
 };
     
 
-var makeDot = function(x,y){
+var makeDot = function(x,y,r,dir){
 
     var c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
     c.setAttribute("cx",x);
     c.setAttribute("cy",y);
-    c.setAttribute("r","25");
+    c.setAttribute("r",r);
     c.setAttribute("fill","blue");
+    c.setAttribute("dir",dir);
 
     
     c.addEventListener("click",circleClick);
@@ -46,7 +47,7 @@ var makeDot = function(x,y){
 var drawDot = function(e){
     console.log("SVG: "+e.target);
     if (this == e.target){
-	var dot = makeDot(e.offsetX, e.offsetY);
+	var dot = makeDot(e.offsetX, e.offsetY,25,0);
 	svg.appendChild(dot);
     }
 };
@@ -77,7 +78,7 @@ var move = function(){
 
     
     // 0 = bottom right; 1 = top right; 2 = top left; 3 = bottom left
-    var dir = 0;
+
     
     var moveCircle = function(){
 
@@ -88,14 +89,22 @@ var move = function(){
 
 
 	for (var i = 0; i < allCircles.length; i++){
+
+	 
 	    var curCircle = allCircles[i];
 	    var x = parseInt(curCircle.getAttribute("cx"));
 	   // console.log(x);
 	    var y = parseInt(curCircle.getAttribute("cy"));
-	  //  console.log(y);
+	    //  console.log(y);
+
+	    var dir = parseInt(curCircle.getAttribute("dir"));
 
 	    var xMaxBound = svg.getAttribute("width") - 25;
 	    var yMaxBound = svg.getAttribute("height") - 25;
+
+	    if (x == svg.getAttribute("width")/2){
+		split(curCircle);
+	    }
 
 	    
 	    if (dir== 0){
@@ -169,6 +178,7 @@ var move = function(){
 	    
 	    curCircle.setAttribute("cx",x);
 	    curCircle.setAttribute("cy",y);
+	    curCircle.setAttribute("dir",dir);
 	    
 	}
 	
@@ -177,6 +187,43 @@ var move = function(){
     moveCircle();
 };
 
+
+var split = function(circle){
+    //if dir 0, dir 2
+    //if dir 1, dir 3
+    //if dir 2, dir 0
+    //if dir 3, dir 1
+    var radius = parseInt(circle.getAttribute("r"));
+    var x = parseInt(circle.getAttribute("cx"));
+    var y = parseInt(circle.getAttribute("cy"));
+    var dir = parseInt(circle.getAttribute("dir"));
+
+    
+    var radiusHalf = radius/2;
+    circle.setAttribute("r", radiusHalf);
+    
+    var newDir;
+    if (dir == 0){
+	newDir = 2;
+    }
+
+    else if (dir ==1){
+	newDir = 3;
+    }
+
+    else if (dir == 2){
+	newDir = 0;
+    }
+    else
+	newDir = 1;
+    
+    makeDot(x,y,radiusHalf, newDir);
+    
+    if (circle.getAttribute("r") < 1){
+	circle.remove();
+    }
+};
+	
 
 //added a stop function/button for testing
 
