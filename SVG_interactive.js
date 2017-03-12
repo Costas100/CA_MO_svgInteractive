@@ -23,7 +23,7 @@ var randomStart = function(){
 var makeRandDot = function(){
     var x = randomStart();
     var y = randomStart();
-    return makeDot(x,y);
+    return makeDot(x,y,"25","0");
 };
     
 
@@ -83,10 +83,8 @@ var move = function(){
     var moveCircle = function(){
 
 
-	//idk why they all move in the same direction
-	//the code should change each individual x,y differently
 	var allCircles = document.getElementsByTagName('circle');
-
+	console.log(document.getElementsByTagName('circle'));
 
 	for (var i = 0; i < allCircles.length; i++){
 
@@ -217,12 +215,14 @@ var split = function(circle){
     }
     else
 	newDir = 1;
-    
-    makeDot(x,y,radiusHalf, newDir);
+
+    var r = radius.toString();
+    svg.append( makeDot(x,y,radiusHalf, newDir));
     
     if (circle.getAttribute("r") < 1){
 	circle.remove();
     }
+    console.log(document.getElementsByTagName('circle'));
 };
 	
 
