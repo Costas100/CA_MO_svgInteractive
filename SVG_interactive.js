@@ -98,13 +98,19 @@ var move = function(){
 	    var dir = parseInt(curCircle.getAttribute("dir"));
 	    var r = parseInt(curCircle.getAttribute('r'));
 	    
+	   
+
+	   if (x == svg.getAttribute("width")/2){
+		curCircle.setAttribute("cx", x+2);
+		curCircle.setAttribute("r", r/2);
+		if (curCircle.getAttribute("r")<1){
+		    curCircle.remove();
+		}
+		
+	//	split(curCircle);
+	    }
 	    var xMaxBound = svg.getAttribute("width") - r;
 	    var yMaxBound = svg.getAttribute("height") - r;
-
-	    if (x == svg.getAttribute("width")/2){
-		split(curCircle);
-	    }
-
 	    
 	    if (dir== 0){
 		if (y >= yMaxBound){
@@ -129,7 +135,7 @@ var move = function(){
 		    x = x - 1.5;
 		    y = y - 1;
 		}
-		if(y <= 25){
+		if(y <= r){
 		    dir = 0;
 		    x = x + 1.5;
 		    y = y + 1;
@@ -141,12 +147,12 @@ var move = function(){
 	    }
 
 	    else if (dir == 2){
-		if (y <= 25){
+		if (y <= r){
 		    dir = 3;
 		    x = x - 1.5;
 		    y = y + 1;
 		}
-		if (x <= 25){
+		if (x <= r){
 		    dir = 1;
 		    x = x + 1.5;
 		    y = y - 1;
@@ -158,7 +164,7 @@ var move = function(){
 	    }
 	   
 	    else{
-		if (x <= 25){
+		if (x <= r){
 		    dir = 0;
 		    x = x + 1.5;
 		    y = y + 1;
@@ -192,11 +198,19 @@ var split = function(circle){
     //if dir 1, dir 3
     //if dir 2, dir 0
     //if dir 3, dir 1
+
+    //idk why 5 circles are being created when they split :(
+
+    
     var radius = parseInt(circle.getAttribute("r"));
     var x = parseInt(circle.getAttribute("cx"));
     var y = parseInt(circle.getAttribute("cy"));
     var dir = parseInt(circle.getAttribute("dir"));
-
+    
+    if (radius < 1){
+	circle.remove();
+    }
+    circle.setAttribute("cx",x+2);
     
     var radiusHalf = radius/2;
     circle.setAttribute("r", radiusHalf);
@@ -216,12 +230,14 @@ var split = function(circle){
     else
 	newDir = 1;
 
-    var r = radius.toString();
-    svg.append( makeDot(x,y,radiusHalf, newDir));
+    var secondX;
+    if (newDir == 0 || newDir == 1){
+	secondX = x-2;}
+    else{
+	secondX = x+2;}
+    svg.append( makeDot(secondX,y,radiusHalf, newDir));
     
-    if (circle.getAttribute("r") < 1){
-	circle.remove();
-    }
+   
     console.log(document.getElementsByTagName('circle'));
 };
 	
