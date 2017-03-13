@@ -23,11 +23,11 @@ var randomStart = function(){
 var makeRandDot = function(){
     var x = randomStart();
     var y = randomStart();
-    return makeDot(x,y,"25","0");
+    return makeDot(x,y,"25","0","true");
 };
     
 
-var makeDot = function(x,y,r,dir){
+var makeDot = function(x,y,r,dir,old){
 
     var c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
     c.setAttribute("cx",x);
@@ -35,6 +35,7 @@ var makeDot = function(x,y,r,dir){
     c.setAttribute("r",r);
     c.setAttribute("fill","blue");
     c.setAttribute("dir",dir);
+    c.setAttribute("old",old);
 
     
     c.addEventListener("click",circleClick);
@@ -47,13 +48,13 @@ var makeDot = function(x,y,r,dir){
 var drawDot = function(e){
     console.log("SVG: "+e.target);
     if (this == e.target){
-	var dot = makeDot(e.offsetX, e.offsetY,25,0);
+	var dot = makeDot(e.offsetX, e.offsetY,25,0,"true");
 	svg.appendChild(dot);
     }
 };
 
 
-svg.addEventListener("click",drawDot,true);
+svg.addEventListener("click",drawDot,"true");
 
 
 
@@ -88,27 +89,56 @@ var move = function(){
 
 	for (var i = 0; i < allCircles.length; i++){
 
-	 
+	    
 	    var curCircle = allCircles[i];
 	    var x = parseInt(curCircle.getAttribute("cx"));
-	   // console.log(x);
+	    // console.log(x);
 	    var y = parseInt(curCircle.getAttribute("cy"));
 	    //  console.log(y);
 
 	    var dir = parseInt(curCircle.getAttribute("dir"));
 	    var r = parseInt(curCircle.getAttribute('r'));
 	    
-	   
-
-	   if (x == svg.getAttribute("width")/2){
-		curCircle.setAttribute("cx", x+2);
-		curCircle.setAttribute("r", r/2);
+	    
+	    //for some reason, the test case doesn't always
+	    //hold true when the circle is moving
+	    //from right to left
+	    if (x == svg.getAttribute("width")/2 && curCircle.getAttribute("old") == "true"){
 		if (curCircle.getAttribute("r")<1){
 		    curCircle.remove();
 		}
 		
-	//	split(curCircle);
+		curCircle.setAttribute("cx", x+2);
+		curCircle.setAttribute("r", r/2);
+
+		var newDir;
+		if (dir == 0){
+		    newDir = 2;
+		}
+
+		else if (dir ==1){
+		    newDir = 3;
+		}
+
+		else if (dir == 2){
+		    newDir = 0;
+		}
+		else
+		    newDir = 1;
+
+
+		
+		//test case, assume new direction is 1
+		var secondCircle = makeDot(x+2,y,r/2,newDir,"false");
+		svg.append(secondCircle);
+		
+		
+		//	split(curCircle);
+		//I tried following DW's suggestion of making another
+		//function. It didn't work...
 	    }
+
+	    
 	    var xMaxBound = svg.getAttribute("width") - r;
 	    var yMaxBound = svg.getAttribute("height") - r;
 	    
@@ -117,11 +147,13 @@ var move = function(){
 		    dir = 1;
 		    x = x + 1.5;
 		    y = y - 1;
+		    curCircle.setAttribute("old","true");
 		}
 		if (x >= xMaxBound){
 		    dir = 3;
 		    x = x - 1.5;
 		    y = y + 1;
+		    curCircle.setAttribute("old",true);
 		}	
 		else{
 		    x = x + 1.5;
@@ -134,11 +166,13 @@ var move = function(){
 		    dir = 2;
 		    x = x - 1.5;
 		    y = y - 1;
+		    curCircle.setAttribute("old","true");
 		}
 		if(y <= r){
 		    dir = 0;
 		    x = x + 1.5;
 		    y = y + 1;
+		    curCircle.setAttribute("old","true");
 		}
 		else{
 		    x = x + 1.5;
@@ -151,28 +185,32 @@ var move = function(){
 		    dir = 3;
 		    x = x - 1.5;
 		    y = y + 1;
+		    curCircle.setAttribute("old","true");
 		}
 		if (x <= r){
 		    dir = 1;
 		    x = x + 1.5;
 		    y = y - 1;
+		    curCircle.setAttribute("old","true");
 		}		
 		else{
 		    x = x - 1.5;
 		    y = y - 1;
 		}
 	    }
-	   
+	    
 	    else{
 		if (x <= r){
 		    dir = 0;
 		    x = x + 1.5;
 		    y = y + 1;
+		    curCircle.setAttribute("old","true");
 		}
 		if (y >= yMaxBound){
 		    dir = 2;
 		    x = x - 1.5;
 		    y = y - 1;
+		    curCircle.setAttribute("old","true");
 		}
 		else{
 		    x = x - 1.5;
@@ -193,53 +231,6 @@ var move = function(){
 };
 
 
-var split = function(circle){
-    //if dir 0, dir 2
-    //if dir 1, dir 3
-    //if dir 2, dir 0
-    //if dir 3, dir 1
-
-    //idk why 5 circles are being created when they split :(
-
-    
-    var radius = parseInt(circle.getAttribute("r"));
-    var x = parseInt(circle.getAttribute("cx"));
-    var y = parseInt(circle.getAttribute("cy"));
-    var dir = parseInt(circle.getAttribute("dir"));
-    
-    if (radius < 1){
-	circle.remove();
-    }
-    circle.setAttribute("cx",x+2);
-    
-    var radiusHalf = radius/2;
-    circle.setAttribute("r", radiusHalf);
-    
-    var newDir;
-    if (dir == 0){
-	newDir = 2;
-    }
-
-    else if (dir ==1){
-	newDir = 3;
-    }
-
-    else if (dir == 2){
-	newDir = 0;
-    }
-    else
-	newDir = 1;
-
-    var secondX;
-    if (newDir == 0 || newDir == 1){
-	secondX = x-2;}
-    else{
-	secondX = x+2;}
-    svg.append( makeDot(secondX,y,radiusHalf, newDir));
-    
-   
-    console.log(document.getElementsByTagName('circle'));
-};
 	
 
 //added a stop function/button for testing
